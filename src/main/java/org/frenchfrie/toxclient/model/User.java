@@ -14,22 +14,46 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.frenchfrie.toxclient.model;
 
 import im.tox.jtoxcore.FriendList;
-import im.tox.jtoxcore.ToxUserStatus;
+import im.tox.jtoxcore.JTox;
+import im.tox.jtoxcore.ToxException;
 
 /**
+ * Representation of current user. Calls are forwarded to the JTox instance.
+ * <p>
+ * This class aim is to explode Tox API and to store possible user properties.
+ * </p>
  *
  * @author frenchfrie
  */
 public class User {
+
+    JTox tox;
+
+    public User(JTox tox) {
+        this.tox = tox;
+    }
+
+    public String getName() throws ToxException {
+        return tox.getSelfName();
+    }
     
-    private String name;
+    public void setName(String name) throws ToxException{
+        tox.setName(name);
+    }
+
+    public String getAddress() throws ToxException {
+        return tox.getAddress();
+    }
     
-    private ToxUserStatus status;
-    
-    private FriendList friends;
-    
+    public FriendList getFriendList() {
+        return tox.getFriendList();
+    }
+
+    public int getNospam() throws ToxException {
+        return tox.getNospam();
+    }
+
 }

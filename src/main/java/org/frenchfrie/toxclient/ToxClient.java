@@ -22,7 +22,6 @@ import im.tox.jtoxcore.ToxException;
 import im.tox.jtoxcore.callbacks.CallbackHandler;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -45,9 +44,7 @@ public class ToxClient {
    private ScheduledThreadPoolExecutor executor;
 
    public ToxClient() throws ReflectiveOperationException {
-
       addDevLibsToPath(System.getProperty("os.name"), System.getProperty("os.arch"));
-
       try {
          SwingUtilities.invokeAndWait(new Runnable() {
 
@@ -60,7 +57,8 @@ public class ToxClient {
             }
          });
       } catch (InterruptedException | InvocationTargetException ex) {
-         Logger.getLogger(ToxClient.class.getName()).log(Level.SEVERE, null, ex);
+         Logger.getLogger(ToxClient.class.getName()).log(Level.SEVERE, "Failed to start GUI.", ex);
+         return;
       }
       ToxFriendList fl = new ToxFriendList();
       CallbackHandler callbackHandler = new CallbackHandler(fl);
@@ -78,24 +76,30 @@ public class ToxClient {
       }
    }
 
-   /**
-    * @param args the command line arguments
-    */
+   @SuppressWarnings("ResultOfObjectAllocationIgnored")
    public static void main(String[] args) throws Exception {
-      System.out.println("path = " + System.getProperty("java.library.path"));
       new ToxClient();
    }
 
    /**
     * This method allow to add natives libs to the path. It shouldn't be used in
     * production because a package should depend on natives packages placed at
-    * their proper places on the filesystem (ie /usr/lib/).<br/>
+    * their proper places on the filesystem (ie /usr/lib/)
+    * .<p>
     * By the time it is packaged, I will add what i can in natives builds
     * os/arch in folders in natives named &lt;os.name&gt;_&lt;os.arch&gt;.
+    * </p>
+    * <p>
+    * Workaroud gently provided by this Stackoverflow post:
+    * http://stackoverflow.com/a/24988095/3257962
+    * </p>
+    *
     *
     * @param osName
     * @param osArch
     * @throws ReflectiveOperationException
+    * @
+    * @see
     */
    private static void addDevLibsToPath(String osName, String osArch) throws ReflectiveOperationException {
       String libPathes = System.getProperty("java.library.path");
